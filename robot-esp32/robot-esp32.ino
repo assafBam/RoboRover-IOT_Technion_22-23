@@ -67,7 +67,7 @@ extern int gpLb =  2; // Left 1
 extern int gpLf = 14; // Left 2
 extern int gpRb = 15; // Right 1
 extern int gpRf = 13; // Right 2
-extern int gpLed =  4; // Light
+extern int gpLed =  33; // Light
 extern String WiFiAddr ="";
 
 void startCameraServer();
@@ -146,7 +146,8 @@ void setup() {
     delay(500);
       }
   Serial.println("");
-  Serial.println("WiFi connected");
+  Serial.print("WiFi: connected to network ");
+  Serial.println(SSID);
 
   startCameraServer();
 
@@ -160,3 +161,4 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 }
+
