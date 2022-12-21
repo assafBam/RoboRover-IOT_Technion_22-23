@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 
 #	turn on WiFi:
 # sudo rfkill unblock all
@@ -7,29 +7,72 @@
 
 import wifi
 import os
+from bluedot.btcomm import BluetoothClient as btc
+import qrcode
+from pyngrok import ngrok
 
-# turn on wifi:
-os.system('sudo rfkill unblock all')
-os.system('sudo ifconfig wlan0 up')
-#	check if both returns 0. if not then the command failed
+#config ngrok
+ngrok.set_auth_token('2HaOK69ss6F3oaheISAVSJ9egoN_2ojAtW6FK5HyVJDuNeVy5')
+
+def getPassword(networks_data, name):
+    for net_ssid, net_psk in networks_data:
+        if net_ssid == name:
+            return net_psk
+    return ''
+
+def getNetworksInfo():
+    conf_file = open('/etc/wpa_supplicant/wpa_supplicant.conf')
+    conf_str = conf_file.read()
+    conf_str = conf_str.replace('\n', '').replace('\t', '')
+
+    networks = conf_str.split('network=')
+    networks = [i for i in networks if 'ssid' in i]
+    networks = [i.split('"') for i in networks]
+
+
+    networks_data = []
+    for net in networks:
+        ssid, password = '', ''
+        for i, elem in enumerate(net):
+            if 'ssid' in elem:
+                ssid = net[i+1]
+            if 'psk' in elem:
+                password = net[i+1]
+        networks_data.append((ssid, password))
+    return networks_data
+
+def data_rec(data):
+    global ssid
+    global password
+    global bluetooth_connection
+    global roborover_ip
+    print(data)
+    if 'ssid' in data:
+        bluetooth_connection.send(ssid)
+        print('sent ssid via bluetooth')
+    if 'password' in data:
+        bluetooth_connection.send(password)
+        print('sent password via bluetooth')
+    if '.' in data:
+        roborover_ip = data
+
 
 # scan available networks:
-cells = wifi.scan.Cell.all('wlan0')
+cell = list(wifi.scan.Cell.all('wlan0'))[0] # note that when WiFi is connected this returns the connected WiFi only
 
-# get ssid from user:
-ssid = raw_input('please enter the wifi\'s name: ')
+ssid = cell.ssid
+networks = getNetworksInfo()
+password = getPassword(networks, ssid)
+roborover_ip = ''
 
-# check if there exists a network with the provided ssid:
-#	sort the cells list (move the cell with the provided ssid to the begginig of the list)
-cells.sort(key=lambda x: x.ssid!=ssid)
-if cells[0].ssid != ssid:
-	raise IndexError('no network with provided ssid') # decide what to do later, possibly do a while loop
+print("ssid: " + ssid + '\t password: ' + password)
+bluetooth_connection = btc('RoboRover', data_rec)
 
-# get password from user:
-password = raw_input('please enter the wifi\'s password: ')
+while roborover_ip == '':
+    pass
 
-# connect to wifi:
-scheme = wifi.Scheme.for_cell('wlan0', ssid, cells[0], password)
-scheme.activate() # does not work. need to find something else.
+tunnel = ngrok.connect(roborover_ip + ':80')
+tunnel_qr = qrcode.make(tunnel.public_url)
+tunnel_qr.show()
 
 

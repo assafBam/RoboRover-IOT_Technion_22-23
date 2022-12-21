@@ -7,5 +7,5 @@
 // #define SSID "SallyNet"
 // #define PASSWORD "morz3277"
 
-#define SSID "bambi452112"
-#define PASSWORD "bambi452112"
+// #define SSID "bambi452112"
+// #define PASSWORD "bambi452112"

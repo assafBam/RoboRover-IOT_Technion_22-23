@@ -26,6 +26,7 @@ extern int gpRb;
 extern int gpRf;
 extern int gpLed;
 extern String WiFiAddr;
+extern void claw();
 
 void WheelAct(int nLf, int nLb, int nRf, int nRb);
 
@@ -163,8 +164,13 @@ static esp_err_t capture_handler(httpd_req_t *req){
         Serial.println("dl_matrix3du_alloc failed");
         httpd_resp_send_500(req);
         return ESP_FAIL;
-    }
-
+    }  
+      
+static esp_err_t claw_handler(httpd_req_t *req){
+  Serial.println("claw");
+    claw();
+    return ESP_OK;
+  }
 
 
 static esp_err_t stream_handler(httpd_req_t *req){
@@ -375,10 +381,10 @@ static esp_err_t index_handler(httpd_req_t *req){
 
  page += "<p align=center><button style=background-color:lightgrey;width:90px;height:80px onmousedown=getsend('back') onmouseup=getsend('stop') ontouchstart=getsend('back') ontouchend=getsend('stop') ><b>Backward</b></button></p>\n";  
 
-//  page += "<p align=center>\n";
+ page += "<p align=center>\n";
 //  page += "<button style=background-color:yellow;width:140px;height:40px onmousedown=getsend('ledon')><b>Light ON</b></button>\n";
-//  page += "<button style=background-color:yellow;width:140px;height:40px onmousedown=getsend('ledoff')><b>Light OFF</b></button>\n";
-//  page += "</p>\n";
+ page += "<button style=background-color:yellow;width:140px;height:40px onmousedown=getsend('ledoff')><b>CLAW</b></button>\n";
+ page += "</p>\n";
   
   page+="<script>\n";
     page+="j=document.getElementById('screen');\n";
@@ -488,7 +494,7 @@ void startCameraServer(){
     httpd_uri_t ledoff_uri = {
         .uri       = "/ledoff",
         .method    = HTTP_GET,
-        .handler   = ledoff_handler,
+        .handler   = claw_handler,
         .user_ctx  = NULL
     };
 
