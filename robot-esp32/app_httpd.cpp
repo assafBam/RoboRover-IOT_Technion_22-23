@@ -360,7 +360,7 @@ static esp_err_t status_handler(httpd_req_t *req){
 }
 
 static esp_err_t index_handler(httpd_req_t *req){
-  String interval = "500";
+  String interval = "1000";
   Serial.println("index");
     httpd_resp_set_type(req, "text/html");
     String page = "";
@@ -413,13 +413,13 @@ static esp_err_t back_handler(httpd_req_t *req){
 }
 
 static esp_err_t left_handler(httpd_req_t *req){
-    WheelAct(HIGH, LOW, LOW, HIGH);
+    WheelAct(LOW, HIGH, HIGH, LOW);
     Serial.println("Left");
     httpd_resp_set_type(req, "text/html");
     return httpd_resp_send(req, "OK", 2);
 }
 static esp_err_t right_handler(httpd_req_t *req){
-    WheelAct(LOW, HIGH, HIGH, LOW);
+    WheelAct(HIGH, LOW, LOW, HIGH);
     Serial.println("Right");
     httpd_resp_set_type(req, "text/html");
     return httpd_resp_send(req, "OK", 2);

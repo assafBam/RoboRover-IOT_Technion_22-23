@@ -37,6 +37,10 @@ extern int gpLed =  33; // Light
 int gpClaw = 12;
 extern String WiFiAddr ="";
 Servo claw_servo;
+namespace Claw{
+const int open = 30;
+const int closed = 83;
+}
 
 extern void startCameraServer();
 
@@ -89,11 +93,12 @@ void init(){
   digitalWrite(gpRb, LOW);
   digitalWrite(gpRf, LOW);
   digitalWrite(gpLed, LOW);
-  claw_servo.write(0);
+  claw_servo.write(Claw::closed);
 }
+
 
 void claw(){
   static bool pos=true;
-  claw_servo.write(pos? 180 : 0);
+  claw_servo.write(pos? Claw::closed : Claw::open); //TODO: check the pose of the claw when closed and change here
   pos = !pos;    
 }
