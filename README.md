@@ -6,7 +6,7 @@
 * Sally Turutov
 
 ## Project Description:
-The perpose of this project is to demonstrate control a simple robot throw a WEB interface from the internet (from all over the world)
+The purpose of this project is to demonstrate control of a simple robot throw a WEB interface from the internet (from all over the world)
 
 this Git contains the following directories:
 1. **robot-esp32:** the code for the ESP32-CAM micro-controller that runs the robot
